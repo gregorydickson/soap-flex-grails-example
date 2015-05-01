@@ -24,13 +24,12 @@ class PullmanXMLScraperJob  {
     
     static triggers = {
         //cron name: 'pullmanXMLTrigger', cronExpression: "0 0 1 * * ?"
-        simple name: 'pullmanXMLTrigger', startDelay: 20000, repeatInterval: 1000*60*60*24
+        simple name: 'pullmanXMLTrigger', startDelay: 1000, repeatInterval: 1000*60*60*24
     }
 
     def group = "LatAmGroup"
     def description = "Bus pullmanXML scraper"
 
-    public static Log log = LogFactory.getLog("PullmanXML")
 
     public void execute(JobExecutionContext context) {
         
@@ -48,14 +47,14 @@ class PullmanXMLScraperJob  {
             def someRoutes = Route.findAllByOriginAndDestination(origin,dest)
             def pullman = Company.findByName("pullman bus")
             def routes = []
-            //routes = CompanyRoute.findAllByCompany( Company.findByName("pullman bus"))
-            routes = CompanyRoute.findAllByRouteInListAndCompany(someRoutes,pullman)
+            routes = CompanyRoute.findAllByCompany(pullman)
+            //routes = CompanyRoute.findAllByRouteInListAndCompany(someRoutes,pullman)
             log.info "PULLMAN--XML Staring New Scrape"
             routes.collect{routeIds << it.id}
             PullmanClient getsessionclient = new PullmanClient()
             def sessionId = getsessionclient.startSession()
             if(routes) {
-                GParsPool.withPool(15) {
+                GParsPool.withPool(20) {
                     routeIds.eachParallel { id ->
                         try {
                             CompanyRoute.withNewSession{
@@ -84,7 +83,7 @@ class PullmanXMLScraperJob  {
                                 def date = new Date()
                                 date.clearTime()
                                 //Pullman only allows +2 in BuscaSalidaServicioTarifa
-                                for ( i in 2..2 ) {
+                                for ( i in 2..31 ) {
                                     datesToScrape << (date + i)
                                 }
                                 
@@ -157,31 +156,28 @@ class PullmanXMLScraperJob  {
 
         log.info "**********************  BUILDING a PULLMAN TRIP *****************************"
         def pullmanReturnDate = new SimpleDateFormat('ddMMyyyy')
+        def dateTimeFormat = new SimpleDateFormat('ddMMyyyy HHmm')
         def trip = new Trip()
 
         trip.price = info.tarifa.toInteger()
-        def departureHour = info.horaSalida.substring(0,1).toInteger()
+        def departureHour = info.horaSalida.substring(0,2).toInteger()
+        log.info "horaSalida"+ info.horaSalida
+        log.info "departureHour"+departureHour
+        def departureMin = info.horaSalida.substring(2,4).toInteger()
+        log.info "departureMin"+departureMin
         
-        def departureMin = info.horaSalida.substring(2,3).toInteger()
-        
-        def arrivalHour = info.horaLlegada.substring(0,1).toInteger()
-        def arrivalMin = info.horaLlegada.substring(2,3).toInteger()
-        
-        Date arrivalDay = pullmanReturnDate.parse(info.fechaLlegada)
-        log.info "FECHA LLEGADA:"+ info.fechaLlegada
-        log.info "arrival Hour:"+arrivalHour
-        log.info "arrival min:"+arrivalMin
-        log.info "arrival Day:" + arrivalDay 
         Date departure  
-        Date arrival
+        
         use(TimeCategory){
             departure = date +  departureHour.hours + departureMin.minutes
-            arrival = arrivalDay + arrivalHour.hours + arrivalMin.minutes
+            log.info "depature: "+departure
         }
         
         trip.departureTime = departure
         trip.departureHour = departureHour
-        trip.arrivalTime = arrival
+        
+        log.info "info.fechaLlegada:"+info.fechaLlegada+",horaLlegada"+info.horaLlegada
+        trip.arrivalTime = dateTimeFormat.parse("$info.fechaLlegada $info.horaLlegada")
         //clase contains the values: [SAL09, SEM42, SEM14, SEM46, SAL12, SAL31, SAL08, SEM45, EJE40, SEM44, SEM16, SEM47]
         def seatType = seatTypes['clasico']
         if(info.clasePiso.contains('SEM') || info.clasePiso.contains('EJE')){
@@ -223,7 +219,9 @@ class PullmanXMLScraperJob  {
         use(TimeCategory) {
             upperDepartureTime = date + 23.hours + 59.minutes
         }
-
+        log.info "DELETING DATE:"+ date
+        log.info "DELETING DATE2:"+upperDepartureTime
+        log.info "CompanyRoute:"+companyRoute.id
         List companyRoutes = CompanyRoute.findAllByRouteAndCompanyInList(route,companies)
         
         def trips = Trip.findAllByIsTicketableAndCompanyRouteInListAndDepartureTimeBetween(
@@ -232,7 +230,8 @@ class PullmanXMLScraperJob  {
                 date,
                 upperDepartureTime
         )
-        trips*.delete(failOnError:true)
+        
+        trips*.delete(failOnError:true,flush:true)
         
     }
 

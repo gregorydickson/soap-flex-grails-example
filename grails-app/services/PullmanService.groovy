@@ -58,14 +58,8 @@ class PullmanService {
             pullmanClient.origenDestino(id,codigoCiudad)
         }
     }
-    def buscaServicio(def codigoCiudadOrigen,def codigoCiudadDestino){
-        def id = pullmanSessionId ?: session()
-        if(!pullmanClient){
-            pullmanClient = new PullmanClient()
-        }
-        pullmanClient.buscaServicio(id,codigoCiudadOrigen,codigoCiudadDestino)
-    }
-    def buscaSalidaServicioTarifa(def codigoCiudadOrigen,def codigoCiudadDestino,def date){
+    
+    def buscaTarifaServicio(def codigoCiudadOrigen,def codigoCiudadDestino,def date){
         //log.info "BUSCA SALIDA SERVICIO TARIFA"
         def id = pullmanSessionId ?: session()
         if(!pullmanClient){
@@ -80,37 +74,5 @@ class PullmanService {
         }
     }
 
-    def buscaPlanillaWeb(def busId){
-        def id = pullmanSessionId ?: session()
-        if(!pullmanClient){
-            pullmanClient = new PullmanClient()
-        }
-        try{
-            pullmanClient.buscaPlanillaWeb(id,busId)
-        }catch (org.springframework.ws.soap.client.SoapFaultClientException e){
-            id = newSession()
-            pullmanClient.buscaPlanillaWeb(id,busId)
-        }
-    }
-    def buscaDisponibilidadAsiento(Trip trip){
-        
-        def map = [:]
-        List list
-        def id = pullmanClient.startSession()
-        try{
-            list = pullmanClient.buscaDisponibilidadAsiento(id,trip)
-        }catch (org.springframework.ws.soap.client.SoapFaultClientException e){
-            pullmanClient = new PullmanClient()
-            id = pullmanClient.startSession()
-            list = pullmanClient.buscaDisponibilidadAsiento(id,trip)
-        }
-        list.each{AsientoProcesoVentaWeb ventaWeb ->
-            map << [piso1TotalDisponible:ventaWeb.piso1.totalAsientoDisponible]
-            map << [piso2TotalDisponible:ventaWeb.piso2.totalAsientoDisponible]
-            map << [piso1Disponible:ventaWeb.piso1.disponibilidad]
-            map << [piso2Disponible:ventaWeb.piso2.disponibilidad]
-        }
-        return map
-    }
-
+    
 }

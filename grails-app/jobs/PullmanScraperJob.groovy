@@ -68,8 +68,8 @@ class PullmanScraperJob  {
                 log.error "NO PULLMAN ROUTES FOR FLASH/FLEX SCRAPER"
                 return
             } else {
-                //routes = CompanyRoute.findAllByCompany(pullman)
-                routes = CompanyRoute.findAllByRouteInListAndCompany(someRoutes,pullman)
+                routes = CompanyRoute.findAllByCompany(pullman)
+                //routes = CompanyRoute.findAllByRouteInListAndCompany(someRoutes,pullman)
                 log.info "PULLMAN Staring New Scrape"
                 routes.collect{routeIds << it.id}
             }

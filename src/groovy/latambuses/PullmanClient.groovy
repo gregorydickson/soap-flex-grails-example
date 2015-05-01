@@ -70,32 +70,6 @@ class PullmanClient extends WebServiceGatewaySupport {
 		response.ciudadDestino
 	}
 
-	def buscaServicio(def sessionId,def codigoCiudadOrigen,def codigoCiudadDestino){
-		setDefaultUri("http://webservices.pullman.cl/Desarrollo/BuscaSalidaServicio")
-		Jaxb2Marshaller marshaller = new Jaxb2Marshaller()
-		marshaller.setPackagesToScan("cl.pullman.webservices")
-		setMarshaller(marshaller)
-		setUnmarshaller(marshaller)
-
-		
-		GetBuscaServicio request = new GetBuscaServicio()
-		request.codigoComercio = "INT0000010"
-		request.puntoComercio = "VOY01"
-		request.idSession = sessionId
-		request.codigoCiudadOrigen = codigoCiudadOrigen
-		request.codigoCiudadDestino = codigoCiudadDestino
-		//fecha es YYYYMMDD
-		request.fechaSalida = "20150310" //date
-		request.horaSalida = "0000" //all hours, I think
-		request.empresa = "TODOS"
-		
-		SoapActionCallback callback = new SoapActionCallback("http://webservices.pullman.cl/Desarrollo/BuscaSalidaServicio")
-		JAXBElement response = getWebServiceTemplate().marshalSendAndReceive(request,callback)
-
-		GetBuscaServicioResponse servicioResponse = response.getValue()
-		servicioResponse.detalleServicios
-	}
-
 	def buscaSalidaServicioTarifa(def sessionId,def codigoCiudadOrigen,def codigoCiudadDestino,def date){
 		//log.info "DATE "+date
 		setDefaultUri("http://webservices.pullman.cl/Desarrollo/BuscaSalidaServicioTarifa")
@@ -122,50 +96,33 @@ class PullmanClient extends WebServiceGatewaySupport {
 		response.detalleServicioTarifa
 	}
 
-	def buscaPlanillaWeb(def sessionId, def bus){
-		setDefaultUri("http://webservices.pullman.cl/Desarrollo/BuscaPlanillaWeb")
+
+	def buscaTarifaServicio(def sessionId,def codigoCiudadOrigen,def codigoCiudadDestino,def date){
+		//log.info "DATE "+date
+		setDefaultUri("http://webservices.pullman.cl/Desarrollo/BuscaTarifaServicio")
 		Jaxb2Marshaller marshaller = new Jaxb2Marshaller()
 		marshaller.setPackagesToScan("cl.pullman.webservices")
 		setMarshaller(marshaller)
 		setUnmarshaller(marshaller)
 
-		GetPlanillaWeb request = new GetPlanillaWeb()
-		request.codigoComercio = "INT0000010"
-		request.puntoComercio = "VOY01"
-		request.idSession = sessionId
-		request.bus = bus
-		SoapActionCallback callback = new SoapActionCallback("http://webservices.pullman.cl/Desarrollo/BuscaPlanillaWeb")
-		def response = getWebServiceTemplate().marshalSendAndReceive(request,callback)
-		GetPlanillaWebResponse servicioResponse = response
-		servicioResponse.detalleBus
-	}
-
-	List buscaDisponibilidadAsiento(def sessionId, Trip trip){
-		setDefaultUri("http://webservices.pullman.cl/Desarrollo/BuscaDisponibilidadAsiento")
-		Jaxb2Marshaller marshaller = new Jaxb2Marshaller()
-		marshaller.setPackagesToScan("cl.pullman.webservices")
-		setMarshaller(marshaller)
-		setUnmarshaller(marshaller)
-
-		GetDisponibilidadAsiento request = new GetDisponibilidadAsiento()
-		request.codigoComercio = "INT0000010"
-		request.puntoComercio = "VOY01"
-		request.idSession = sessionId
-
-    	request.idServicio = trip.internalTripID
-    	request.bus = trip.bus.busNumber
-    	request.codigoTerminalOrigen = trip.codigoTerminalOrigen
-    	request.codigoTerminalDestino = trip.codigoTerminalDestino
-    	def pullmanDateFormat = new SimpleDateFormat('yyyyMMdd')
-    	Date date = trip.departureTime
-    	date.clearTime()
-    	request.fechaSalida = pullmanDateFormat.format(date)
 		
-		SoapActionCallback callback = new SoapActionCallback("http://webservices.pullman.cl/Desarrollo/BuscaDisponibilidadAsiento")
-		def response = getWebServiceTemplate().marshalSendAndReceive(request,callback)
-		GetDisponibilidadAsientoResponse servicioResponse = response.getValue()
-		servicioResponse.marcaAsiento
+		GetTarifaServicio request = new GetTarifaServicio()
+		request.codigoComercio = "INT0000010"
+		request.puntoComercio = "VOY01"
+		request.ptoVta = "VOY"
+		request.idSession = sessionId
+		request.codigoCiudadOrigen = codigoCiudadOrigen
+		request.codigoCiudadDestino = codigoCiudadDestino
+		//fecha es YYYYMMDD
+		request.fechaSalida = date//"20150310" 
+		request.horaSalida = "0000" //all hours, I think
+		request.empresa = "TODOS"
+		
+		SoapActionCallback callback = new SoapActionCallback("http://webservices.pullman.cl/Desarrollo/BuscaTarifaServicio")
+		GetTarifaServicioResponse response = getWebServiceTemplate().marshalSendAndReceive(request,callback)
+		//GetBuscaServicioTarifaResponse servicioResponse = response.getValue()
+		
 	}
 
-
+	
 }
