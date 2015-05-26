@@ -38,7 +38,7 @@ class PullmanXMLScraperJob  {
             def startTime = System.currentTimeMillis()
 
 
-            updateCitiesAndroutes()
+            //updateCitiesAndroutes()
             
             def routeIds = []
             log.info "LOCATIONS ROUTES COMPANYROUTES PULLMAN DONE ********"
@@ -54,7 +54,7 @@ class PullmanXMLScraperJob  {
             PullmanClient getsessionclient = new PullmanClient()
             def sessionId = getsessionclient.startSession()
             if(routes) {
-                GParsPool.withPool(20) {
+                GParsPool.withPool(40) {
                     routeIds.eachParallel { id ->
                         try {
                             CompanyRoute.withNewSession{

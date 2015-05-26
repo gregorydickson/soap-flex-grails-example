@@ -74,7 +74,7 @@ class PullmanScraperJob  {
                 routes.collect{routeIds << it.id}
             }
             
-            GParsPool.withPool(15) {
+            GParsPool.withPool(20) {
                 routeIds.eachParallel { id ->
                     
                     try {
