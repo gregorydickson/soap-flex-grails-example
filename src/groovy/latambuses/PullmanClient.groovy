@@ -97,6 +97,32 @@ class PullmanClient extends WebServiceGatewaySupport {
 	}
 
 
+	def buscaSalidaServicioTarifaManana(def sessionId,def codigoCiudadOrigen,def codigoCiudadDestino,def date){
+		//log.info "DATE "+date
+		setDefaultUri("http://webservices.pullman.cl/Desarrollo/BuscaSalidaServicioTarifa")
+		Jaxb2Marshaller marshaller = new Jaxb2Marshaller()
+		marshaller.setPackagesToScan("cl.pullman.webservices")
+		setMarshaller(marshaller)
+		setUnmarshaller(marshaller)
+
+		
+		GetBuscaServicioTarifa request = new GetBuscaServicioTarifa()
+		request.codigoComercio = "INT0000010"
+		request.puntoComercio = "VOY01"
+		request.idSession = sessionId
+		request.codigoCiudadOrigen = codigoCiudadOrigen
+		request.codigoCiudadDestino = codigoCiudadDestino
+		//fecha es YYYYMMDD
+		request.fechaSalida = date//"20150310" 
+		request.horaSalida = "1600" //all hours, I think
+		request.empresa = "TODOS"
+		
+		SoapActionCallback callback = new SoapActionCallback("http://webservices.pullman.cl/Desarrollo/BuscaSalidaServicioTarifa")
+		GetBuscaServicioTarifaResponse response = getWebServiceTemplate().marshalSendAndReceive(request,callback)
+		//GetBuscaServicioTarifaResponse servicioResponse = response.getValue()
+		response.detalleServicioTarifa
+	}
+
 	def buscaTarifaServicio(def sessionId,def codigoCiudadOrigen,def codigoCiudadDestino,def date){
 		//log.info "DATE "+date
 		setDefaultUri("http://webservices.pullman.cl/Desarrollo/BuscaTarifaServicio")
