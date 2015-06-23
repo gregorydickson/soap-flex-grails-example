@@ -24,7 +24,7 @@ class PullmanXMLScraperJob  {
     
     static triggers = {
         //cron name: 'pullmanXMLTrigger', cronExpression: "0 0 1 * * ?"
-        simple name: 'pullmanXMLTrigger', startDelay: 1000, repeatInterval: 1000*60*60*24
+        //simple name: 'pullmanXMLTrigger', startDelay: 1000, repeatInterval: 1000*60*60*24
     }
 
     def group = "LatAmGroup"

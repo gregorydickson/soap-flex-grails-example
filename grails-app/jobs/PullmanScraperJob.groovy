@@ -42,7 +42,7 @@ class PullmanScraperJob  {
     
     static triggers = {
         //cron name: 'pullmanTrigger', cronExpression: "0 0 1 * * ?"
-        simple name: 'pullmanTrigger', startDelay: 60000, repeatInterval: 1000*60*60*24
+        simple name: 'pullmanTrigger', startDelay: 6000, repeatInterval: 1000*60*60*24
     }
 
     def group = "LatAmGroup"
@@ -74,7 +74,7 @@ class PullmanScraperJob  {
                 routes.collect{routeIds << it.id}
             }
             
-            GParsPool.withPool(20) {
+            GParsPool.withPool(30) {
                 routeIds.eachParallel { id ->
                     
                     try {
