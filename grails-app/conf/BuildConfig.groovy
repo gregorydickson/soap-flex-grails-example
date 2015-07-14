@@ -56,6 +56,8 @@ grails.project.dependency.resolution = {
         runtime "org.springframework.ws:spring-ws-core:2.2.0.RELEASE"
         runtime "org.springframework:spring-oxm:4.1.5.RELEASE"
         runtime "org.apache.httpcomponents:httpclient:4.3.5"
+
+        runtime 'commons-codec:commons-codec:1.10'
     }
 
     plugins {

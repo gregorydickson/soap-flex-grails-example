@@ -4,6 +4,12 @@ import cl.pullman.webservices.*
 
 import javax.annotation.PostConstruct
 
+import org.apache.commons.codec.binary.Base64
+import java.security.*
+import javax.crypto.Cipher
+import javax.crypto.SecretKey
+import javax.crypto.spec.SecretKeySpec
+
 
 class PullmanService {
 
@@ -72,6 +78,62 @@ class PullmanService {
             id = newSession()
             pullmanClient.buscaSalidaServicioTarifa(id,codigoCiudadOrigen,codigoCiudadDestino,date)
         }
+    }
+
+    Map conciliacionComercioIntegrado(Date fechaDesde, Date fechaHasta,
+                                 String montoTransaccion, String cantidadTransaccion){
+        id = pullmanClient.startSession()
+        Map result
+        String claveEntryptada = encryptar()
+        log.info "clave Encryptada:"+claveEntryptada
+        try{
+            result = pullmanClient.conciliacionComercioIntegrado( id, fechaDesde, claveEntryptada,
+                                                    fechaHasta,  montoTransaccion, cantidadTransaccion)
+        }catch (org.springframework.ws.soap.client.SoapFaultClientException e){
+            log.error "PULLMAN - SERVICE: Error CONCILIACION Soap fault" + e.message
+        } catch(Exception ex){
+            log.error "PULLMAN - SERVICE: Error CONCILIACION  " + ex.message
+        }
+        log.info "Pullman Service - Conciliacion " + result
+        return result
+    }
+
+    Map detalleConciliacion(String detalle){
+        id = pullmanClient.startSession()
+        Map result
+        String claveEntryptada = encryptar()
+        log.info "clave Encryptada:"+claveEntryptada
+        try{
+            result = pullmanClient.detalleConciliacion(id, claveEntryptada, detalle)
+        }catch (org.springframework.ws.soap.client.SoapFaultClientException e){
+            log.error "PULLMAN - SERVICE: Error CONCILIACION Soap fault" + e.message
+        } catch(Exception ex){
+            log.error "PULLMAN - SERVICE: Error CONCILIACION  " + ex.message
+        }
+        log.info "Pullman Service - Conciliacion " + result
+        return result
+    }
+
+    def encryptar(){
+        String texto = "0123456"
+        String secretKey = "iel0AXZPzYnx0cGAO@Pm"
+        String base64EncryptedString = ""
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5")
+            byte[] digestOfPassword = md.digest(secretKey.getBytes("utf-8"))
+            byte[] keyBytes = Arrays.copyOf(digestOfPassword, 24)
+            SecretKey key = new SecretKeySpec(keyBytes, "DESede")
+            Cipher cipher = Cipher.getInstance("DESede")
+            cipher.init(Cipher.ENCRYPT_MODE, key)
+            byte[] plainTextBytes = texto.getBytes("utf-8")
+            byte[] buf = cipher.doFinal(plainTextBytes)
+            byte[] base64Bytes = Base64.encodeBase64(buf)
+            base64EncryptedString = new String(base64Bytes)
+        } catch (Exception ex) {
+            ex.printStackTrace()
+        }
+        return base64EncryptedString;
+
     }
 
     
