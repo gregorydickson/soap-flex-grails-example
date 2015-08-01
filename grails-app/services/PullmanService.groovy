@@ -83,11 +83,12 @@ class PullmanService {
     Map conciliacionComercioIntegrado(Date fechaDesde, Date fechaHasta,
                                  String montoTransaccion, String cantidadTransaccion){
         id = pullmanClient.startSession()
+        log.info "pullman Service conciliacion session:"+id
         Map result
         String claveEntryptada = encryptar()
         log.info "clave Encryptada:"+claveEntryptada
         try{
-            result = pullmanClient.conciliacionComercioIntegrado( id, fechaDesde, claveEntryptada,
+            result = pullmanClient.conciliacionComercioIntegrado( fechaDesde, claveEntryptada,
                                                     fechaHasta,  montoTransaccion, cantidadTransaccion)
         }catch (org.springframework.ws.soap.client.SoapFaultClientException e){
             log.error "PULLMAN - SERVICE: Error CONCILIACION Soap fault" + e.message
@@ -104,7 +105,7 @@ class PullmanService {
         String claveEntryptada = encryptar()
         log.info "clave Encryptada:"+claveEntryptada
         try{
-            result = pullmanClient.detalleConciliacion(id, claveEntryptada, detalle)
+            result = pullmanClient.detalleConciliacion( claveEntryptada, detalle)
         }catch (org.springframework.ws.soap.client.SoapFaultClientException e){
             log.error "PULLMAN - SERVICE: Error CONCILIACION Soap fault" + e.message
         } catch(Exception ex){

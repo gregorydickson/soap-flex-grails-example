@@ -27,8 +27,8 @@ class PullmanConciliacionJob  {
 
     
     static triggers = {
-        cron name: 'pullmanXMLTrigger', cronExpression: "0 0 6 * * ?"
-        //simple name: 'pullmanXMLTrigger', startDelay: 1000, repeatInterval: 1000*60*60*24
+        //cron name: 'pullmanConTrigger', cronExpression: "0 0 6 * * ?"
+        simple name: 'pullmanConTrigger', startDelay: 1000, repeatInterval: 1000*60*60*24
     }
 
     def group = "LatAmGroup"
@@ -36,7 +36,7 @@ class PullmanConciliacionJob  {
 
 
     public void execute(JobExecutionContext context) {
-        
+        Conciliacion con = new Conciliacion()
         try{
             log.info 'Conciliacion PullmanXML  Job'
             List companies = []
@@ -72,22 +72,44 @@ class PullmanConciliacionJob  {
             } 
 
             def canceled = tickets.findAll{it.status == 'Canceled'}
+
             Integer totalCanceled = 0
+            totalCanceled = canceled?.size()
             if(canceled){
                 totalCanceled = canceled.price.sum()
             }
             String monto = (total - totalCanceled).toString()
-            String cantidad = tickets.size().toString()
+            String cantidad = (tickets.size() + totalCanceled).toString()
             log.info "total canceled:"+totalCanceled
             log.info "total:"+ total
             log.info "monto:"+monto
             log.info "cantidad:"+cantidad
             result = pullmanService.conciliacionComercioIntegrado(date,date, monto, cantidad)
+            
+            
+            con.dateFor = date
+            con.dateRun = new Date()
+            if (result?.exito ==  "1"){
+                con.exitoso = true
+            } else {
+                con.exitoso = false
+            }
+            
+            con.codigoConciliacion = result?.codConciliacion
+            con.totalCanceledPrice = totalCanceled.toInteger()
+            con.totalNumberOfTickets = cantidad.toInteger()
+            con.totalTicketsPrice = monto.toInteger()
+            con.mensaje = result?.mensaje ?: ''
+            con.save()
 
             if( result?.exito ==  "1") {
                 log.info "exito "
-            } else {
-                def codConciliacion = result?.codConciliacion
+            } 
+            if (con.codigoConciliacion != null){ 
+                con.detalle = true
+                con.save()
+
+                def codConciliacion = con.codigoConciliacion
                 log.info "running detalle conciliacion con codigo:"+codConciliacion
                 //detalle conciliacion
                 def detalle = "<ventacomercio>"
@@ -108,15 +130,41 @@ class PullmanConciliacionJob  {
                     detalle = detalle + template 
                 }
                 detalle = detalle + "</ventacomercio>"
-                
+                log.info "detalle:"+detalle
                 result = pullmanService.detalleConciliacion(detalle)
+                
+                List<DetalleVenta> excluidos = result?.detalle
+                
+                if(excluidos){
+                    excluidos.each{DetalleVenta venta ->
+                        ConciliacionExcluido ex = new ConciliacionExcluido()
+                        ex.codigo = venta.codigo
+                        ex.punto = venta.punto
+                        ex.boleto = venta.boleto
+                        ex.origen = venta.origen
+                        ex.destino = venta.destino
+                        ex.fechatransaccion = venta.fechatransaccion
+                        ex.valor = venta.valor
+                        ex.idconciliacion = venta.idconciliacion
+                        ex.save()
+                    }
+                }
+                if(result?.exito == 1){
+                    con.detalleExitoso = true
+                }
+                if(result?.mensaje){
+                    con.mensaje = result?.mensaje
+                }
+                con.save()
                 log.info "detalle:"+ result
             }
         
-       
             
         } catch(Throwable e){
             log.error ("Exception in Pullman Conciliacion: ",  e)
+            con.exception = e.message
+            con.save()
+
         }
     }
     
