@@ -74,12 +74,12 @@ class PullmanConciliacionJob  {
             def canceled = tickets.findAll{it.status == 'Canceled'}
 
             Integer totalCanceled = 0
-            totalCanceled = canceled?.size()
+            Integer numberCanceled = canceled?.size()
             if(canceled){
                 totalCanceled = canceled.price.sum()
             }
             String monto = (total - totalCanceled).toString()
-            String cantidad = (tickets.size() + totalCanceled).toString()
+            String cantidad = (tickets.size() + numberCanceled).toString()
             log.info "total canceled:"+totalCanceled
             log.info "total:"+ total
             log.info "monto:"+monto
@@ -149,7 +149,7 @@ class PullmanConciliacionJob  {
                         ex.save()
                     }
                 }
-                if(result?.exito == 1){
+                if(result?.exito == '1'){
                     con.detalleExitoso = true
                 }
                 if(result?.mensaje){
