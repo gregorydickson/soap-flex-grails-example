@@ -27,8 +27,8 @@ class PullmanConciliacionJob  {
 
     
     static triggers = {
-        //cron name: 'pullmanConTrigger', cronExpression: "0 0 6 * * ?"
-        simple name: 'pullmanConTrigger', startDelay: 1000, repeatInterval: 1000*60*60*24
+        cron name: 'pullmanConTrigger', cronExpression: "0 0 6 * * ?"
+        //simple name: 'pullmanConTrigger', startDelay: 1000, repeatInterval: 1000*60*60*24
     }
 
     def group = "LatAmGroup"
@@ -125,7 +125,7 @@ class PullmanConciliacionJob  {
                             <origen>${ticket.trip.companyRoute.startLocationCode}</origen>
                             <destino>${ticket.trip.companyRoute.endLocationCode}</destino> 
                             <fechatransaccion>${ticket.pullmanIssueDate.format('dd-MM-YYYY')}</fechatransaccion>
-                            <valor>${ticket.pricePaid.toInteger().toString()}</valor> 
+                            <valor>${ticket.price.toInteger().toString()}</valor> 
                             <idconciliacion>${codConciliacion}</idconciliacion>
                         </detalleventa>
                     """
