@@ -88,10 +88,15 @@ grails.hibernate.osiv.readonly = false
 environments {
     development {
         grails.logging.jul.usebridge = true
+        pullman.url = "http://190.98.231.232/Servicios/"
+        pullman.key = '7539510'
+        pullman.secret = 'ai$QHReveJTKBOfOTqIr'
     }
     production {
         grails.logging.jul.usebridge = false
-        // TODO: grails.serverURL = "http://www.changeme.com"
+        pullman.url = "http://190.98.231.232/Servicios/"
+        pullman.key = '7539510'
+        pullman.secret = 'ai$QHReveJTKBOfOTqIr'
     }
 }
 
@@ -114,6 +119,7 @@ log4j.main = {
            'org.springframework',
            'org.hibernate',
            'net.sf.ehcache.hibernate'
+    trace   'org.springframework.ws.client.MessageTracing'
     root{
         info 'stdout'
     }

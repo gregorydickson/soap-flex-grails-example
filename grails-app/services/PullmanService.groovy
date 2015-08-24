@@ -14,12 +14,19 @@ import javax.crypto.spec.SecretKeySpec
 class PullmanService {
 
     PullmanClient pullmanClient = null
+    def grailsApplication
     def pullmanSessionId = null
     def id = null
-    
+    def url
+    String clave 
+    String validacion 
     @PostConstruct
     def init(){
+        url = grailsApplication.config.pullman.url
         pullmanClient = new PullmanClient()
+        clave = grailsApplication.config.pullman.key
+        validacion = grailsApplication.config.pullman.secret
+        pullmanClient.url = url
         //pullmanClient.init()
         log.info "PULLMAN SERVICE INIT"
     }
@@ -116,8 +123,8 @@ class PullmanService {
     }
 
     def encryptar(){
-        String texto = "0123456"
-        String secretKey = "iel0AXZPzYnx0cGAO@Pm"
+        String texto = clave
+        String secretKey = validacion
         String base64EncryptedString = ""
         try {
             MessageDigest md = MessageDigest.getInstance("MD5")

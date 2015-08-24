@@ -40,14 +40,8 @@ class PullmanConciliacionJob  {
         try{
             log.info 'Conciliacion PullmanXML  Job'
             List companies = []
-            companies << Company.findByName("pullman bus")
-            companies << Company.findByName("elqui bus")
-            companies << Company.findByName("atacama vip")
-            companies << Company.findByName("los corsarios")
-            companies << Company.findByName("fichtur vip")
-            companies << Company.findByName("los libertadores")
-            companies << Company.findByName("los conquistadores")
-            companies << Company.findByName("cidher")
+            companies = Company.findAllByPullmanCodeIsNotNull()
+
 
             Date date = new Date()-1
             date.clearTime()

@@ -5,6 +5,8 @@ import org.apache.commons.lang.WordUtils
 import org.quartz.JobExecutionException
 import org.quartz.Job
 import org.quartz.JobExecutionContext
+import static grails.async.Promises.*
+import groovyx.gpars.GParsPool
 
 
 import cl.pullman.webservices.*
