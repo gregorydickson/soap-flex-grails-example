@@ -12,10 +12,11 @@ hibernate {
 environments {
   development {
     dataSource {
-        dbCreate = "validate" // one of 'create', 'create-drop', 'update', 'validate', ''
+        dbCreate = "update" // one of 'create', 'create-drop', 'update', 'validate', ''
         pooled = true
         //url="jdbc:mysql://labdb.cpzaxj0nihxk.us-east-1.rds.amazonaws.com:3306/labdb"
-        
+        //username="labdbuser"
+        //password="labdbuser"
         // PRODUCTION
         //url = "jdbc:mysql://labdbprod.cozoij7to0qa.sa-east-1.rds.amazonaws.com:3306/labdb"
         //username="labdbuser"
@@ -45,7 +46,7 @@ environments {
   
   production {
     dataSource {
-          dbCreate = "validate" 
+          dbCreate = "update" 
           url = "jdbc:mysql://labdbprod.cozoij7to0qa.sa-east-1.rds.amazonaws.com:3306/labdb"
           username="labdbuser"
           password="labdbprod"

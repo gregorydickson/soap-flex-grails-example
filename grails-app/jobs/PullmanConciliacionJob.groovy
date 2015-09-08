@@ -27,7 +27,7 @@ class PullmanConciliacionJob  {
 
     
     static triggers = {
-        cron name: 'pullmanConTrigger', cronExpression: "0 0 6 * * ?"
+        cron name: 'pullmanConTrigger', cronExpression: "0 0 14 * * ?"
         //simple name: 'pullmanConTrigger', startDelay: 1000, repeatInterval: 1000*60*60*24
     }
 
@@ -57,6 +57,11 @@ class PullmanConciliacionJob  {
                     upperDepartureTime,
                     companies
             )
+            tickets.each{ticket ->
+                log.info "ticket:"+ticket.ticketNumber
+                log.info "date:"+ticket.pullmanIssueDate
+
+            }
             
             def result = [exito:'']
             
@@ -65,7 +70,11 @@ class PullmanConciliacionJob  {
                 total = tickets.price.sum()
             } 
 
-            def canceled = tickets.findAll{it.status == 'Canceled'}
+            def canceled = Ticket.findAllByAnulacionDateBetweenAndCompanyInList(
+                    date,
+                    upperDepartureTime,
+                    companies
+            )
 
             Integer totalCanceled = 0
             Integer numberCanceled = 0
