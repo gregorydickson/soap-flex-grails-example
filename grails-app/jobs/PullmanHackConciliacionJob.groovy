@@ -38,25 +38,15 @@ class PullmanHackConciliacionJob  {
     public void execute(JobExecutionContext context) {
         Conciliacion con = new Conciliacion()
         try{
-            /*
-para el día 6 tengo
-
-ventas :14.300
-transacciones:12
 
 
-para el día 7 tengo 69.100 
-transacciones: 15
-
-            */
-
-            Date date = new Date()-14
+            Date date = new Date()-9
             date.clearTime()
             
             log.info "date:"+date
             
             
-            def result = pullmanService.conciliacionComercioIntegrado(date,date, '56700', '14')
+            def result = pullmanService.conciliacionComercioIntegrado(date,date, '82200', '22')
             
             
             con.dateFor = date
@@ -70,8 +60,8 @@ transacciones: 15
             
             
             con.totalCanceledPrice = -1
-            con.totalNumberOfTickets = -1
-            con.totalTicketsPrice = 73600
+            con.totalNumberOfTickets = 22
+            con.totalTicketsPrice = 82200
             con.mensaje = 'hacked'
             con.save()
 

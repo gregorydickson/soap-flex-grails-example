@@ -27,7 +27,7 @@ class PullmanConciliacionJob  {
 
     
     static triggers = {
-        cron name: 'pullmanConTrigger', cronExpression: "0 0 14 * * ?"
+        //cron name: 'pullmanConTrigger', cronExpression: "0 0 14 * * ?"
         //simple name: 'pullmanConTrigger', startDelay: 1000, repeatInterval: 1000*60*60*24
     }
 

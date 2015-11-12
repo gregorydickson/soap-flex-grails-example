@@ -124,3 +124,16 @@ log4j.main = {
         info 'stdout'
     }
 }
+
+grails {
+    mail {
+        host = "box1030.bluehost.com"
+        port = 465
+        username = "reservas@voyhoy.com"
+        password ="Voyhoy123!"
+        props = ["mail.smtp.auth": "true",
+                 "mail.smtp.socketFactory.port": "465",
+                 "mail.smtp.socketFactory.class": "javax.net.ssl.SSLSocketFactory",
+                 "mail.smtp.socketFactory.fallback": "false"]
+    }
+}

@@ -12,20 +12,20 @@ hibernate {
 environments {
   development {
     dataSource {
-        dbCreate = "update" // one of 'create', 'create-drop', 'update', 'validate', ''
+        dbCreate = "validate" // one of 'create', 'create-drop', 'update', 'validate', ''
         pooled = true
         //url="jdbc:mysql://labdb.cpzaxj0nihxk.us-east-1.rds.amazonaws.com:3306/labdb"
         //username="labdbuser"
         //password="labdbuser"
         // PRODUCTION
-        //url = "jdbc:mysql://labdbprod.cozoij7to0qa.sa-east-1.rds.amazonaws.com:3306/labdb"
-        //username="labdbuser"
-        //password="labdbprod"
+        url = "jdbc:mysql://labdbprod.cozoij7to0qa.sa-east-1.rds.amazonaws.com:3306/labdb"
+        username="labdbuser"
+        password="labdbprod"
         // END PRODUCTION
         
-        url="jdbc:mysql://localhost:3306/labdb"
-        username="root"
-        password=""
+        //url="jdbc:mysql://localhost:3306/labdb"
+        //username="root"
+        //password=""
 
         properties {
           maxActive = 2
