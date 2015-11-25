@@ -124,6 +124,7 @@
         });
 
         $("#amount").autoNumeric('init', {aSep: '.', aDec: ',', aPad: false});
+        $("#pax").autoNumeric('init', {aSep: '.', aDec: ',', aPad: false});
 
         $(document).on("click", "#form-submit-button", function(){
 
