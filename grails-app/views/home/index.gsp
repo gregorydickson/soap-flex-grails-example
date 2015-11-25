@@ -26,12 +26,6 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-
-    <g:javascript library="jquery.min"/>
-    <g:javascript library="bootstrap.min"/>
-    <g:javascript library="moment"/>
-    <g:javascript library="bootstrap-datepicker"/>
-    <g:javascript library="ie10-viewport-bug-workaround"/>
 </head>
 
 <body>
@@ -59,54 +53,99 @@
     <div class="row">
         <div class="container">
             <h1 class="page-header">Hack Conciliación Pullman</h1>
-            <div class="row">
-                <div class="col-xs-6">
-                    <div class='input-group date' id='startDate'>
-                        <input type='text' class="form-control" placeholder="Fecha Inicio"/>
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                        </span>
+            <form id="form-hacked-conciliacion" action="<g:createLink controller="home" action="conciliar"/>" method="post">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <div class='input-group date'>
+                            <input type='text' id='startDate' class="form-control" placeholder="Fecha Inicio" readonly/>
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class='input-group date'>
+                            <input type='text' id='endDate' class="form-control" placeholder="Fecha Fin" readonly/>
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
                     </div>
                 </div>
-                <div class="col-xs-6">
-                    <div class='input-group date' id='endDate'>
-                        <input type='text' class="form-control" placeholder="Fecha Fin"/>
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                        </span>
+                <br/><br/><br/>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <div class='input-group date'>
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-barcode"></span>
+                            </span>
+                            <input type='text' id='pax' class="form-control" placeholder="Número de transacciones (#PAX)"/>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <br/><br/><br/>
-            <div class="row">
-                <div class="col-xs-4">
-                    <div class='input-group date' id='pax'>
-                        <input type='text' class="form-control" placeholder="Número de transacciones (#PAX)"/>
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-barcode"></span>
-                        </span>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <div class='input-group date'>
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-usd"></span>
+                            </span>
+                            <input type='text' id='amount' class="form-control" min="0.01" step="0.01" placeholder="Monto"/>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-4">
-                    <div class='input-group date' id='amount'>
-                        <input type='text' class="form-control" placeholder="Monto"/>
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-usd"></span>
-                        </span>
-                    </div>
-                </div>
-            </div>
+                <br/><br/>
+                <button type="button" class="btn btn-primary" id="form-submit-button">Enviar</button>
+            </form>
             <p>${flash.result_message}</p>
         </div>
     </div>
 </div>
 
+<g:javascript library="jquery.min"/>
+<g:javascript library="bootstrap.min"/>
+<g:javascript library="moment"/>
+<g:javascript library="bootstrap-datepicker"/>
+<g:javascript library="autoNumeric-min"/>
+<g:javascript library="ie10-viewport-bug-workaround"/>
+
 <script type="text/javascript">
-    $(function () {
-        $('#startDate').datepicker();
-        $('#endDate').datepicker();
+    $(document).ready(function () {
+        $('#startDate').datepicker({
+            format: 'yyyy-mm-dd',
+            weekStart: '1',
+            autoclose: true,
+            todayHighlight: true
+        });
+        $('#endDate').datepicker({
+            format: 'yyyy-mm-dd',
+            weekStart: '1',
+            autoclose: true,
+            todayHighlight: true
+        });
+
+        $("#amount").autoNumeric('init', {aSep: '.', aDec: ',', aPad: false});
+
+        $(document).on("click", "#form-submit-button", function(){
+
+            var formData = {
+                startDate: $('#startDate').val(),
+                endDate: $('#endDate').val(),
+                pax: $('#pax').val(),
+                amount: $('#amount').val()
+            };
+
+            $.ajax({
+                url : "<g:createLink controller="home" action="conciliar"/>",
+                type: "POST",
+                data : formData,
+                success: function(data, textStatus, jqXHR){
+                    //data - response from server
+                },
+                error: function (jqXHR, textStatus, errorThrown){
+
+                }
+            });
+        });
     });
 </script>
 </body>
