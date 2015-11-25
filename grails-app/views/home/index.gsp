@@ -96,7 +96,8 @@
                 <br/><br/>
                 <button type="button" class="btn btn-primary" id="form-submit-button">Enviar</button>
             </form>
-            <p>${flash.result_message}</p>
+            <div id="success"></div>
+            <div id="error"></div>
         </div>
     </div>
 </div>
