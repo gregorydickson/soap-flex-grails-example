@@ -20,13 +20,21 @@ class HomeController {
     }
 
     def conciliar(){
-        Conciliacion con = new Conciliacion()
+        Date date = dateFormat.parse((String)params.date)
+        date.clearTime()
+
+        Date upperDepartureTime = date
+        use(TimeCategory) {
+            upperDepartureTime = date + 23.hours + 59.minutes
+        }
+
+        Conciliacion con = Conciliacion.findByDateForBetween(date, upperDepartureTime)
+        if(!con)
+            con = new Conciliacion()
+
         String conciliacionMessage = "ups! Something went wrong"
         Boolean response = false
         try{
-
-            Date date = dateFormat.parse((String)params.date)
-            date.clearTime()
 
             String amount = ((String)params.amount).replace(".", "")
             String amountPaid = ((String)params.amountPaid).replace(".", "")

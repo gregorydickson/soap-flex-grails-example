@@ -86,7 +86,7 @@
                                 <span class="glyphicon glyphicon-usd"></span>
                             </span>
                             <div class="controls">
-                                <input type='text' id='amount' name='amount' class="form-control" min="0.01" step="0.01" placeholder="Monto"/>
+                                <input type='text' id='amount' name='amount' class="form-control" placeholder="Monto"/>
                             </div>
                         </div>
                     </div>
@@ -98,17 +98,17 @@
                                 <span class="glyphicon glyphicon-usd"></span>
                             </span>
                             <div class="controls">
-                                <input type='text' id='amountPaid' name='amountPaid' class="form-control" min="0.01" step="0.01" placeholder="Monto pagado"/>
+                                <input type='text' id='amountPaid' name='amountPaid' class="form-control" placeholder="Monto pagado"/>
                             </div>
                         </div>
                     </div>
                 </div>
                 <br/><br/>
                 <div class="form-actions">
-                    <input type="hidden" name="save" value="contact">
-                    <button type="submit" class="btn btn-primary" id="submit_form_button">Enviar</button>
+                    <input type="submit" class="btn btn-primary" id="submit_form_button">
                 </div>
             </form>
+            <br/><br/>
             <div id="success" style="display: none;"><div class="alert alert-success" role="alert"></div></div>
             <div id="error" style="display: none;"><div class="alert alert-danger" role="alert"></div></div>
         </div>
@@ -141,12 +141,6 @@
                     minlength: 2,
                     required: true
                 }
-            },
-            highlight: function (element) {
-                $(element).closest('.controls').addClass('alert-danger').removeClass('alert-success');
-            },
-            success: function (element) {
-                element.text('OK!').closest('.controls').addClass('alert-success').removeClass('alert-danger');
             }
         });
     });
@@ -164,8 +158,9 @@
         $("#amountPaid").autoNumeric('init', {aSep: '.', aDec: ',', aPad: false});
         $("#pax").autoNumeric('init', {aSep: '.', aDec: ',', aPad: false});
 
-        $("#submit_form_button").submit(function(e){
+        $(document).on('submit', 'form', function(e){
 
+            e.preventDefault();
             var formData = {
                 date: $('#date').val(),
                 pax: $('#pax').val(),
@@ -173,23 +168,21 @@
                 amountPaid: $('#amountPaid').val()
             };
 
-            e.preventDefault();
             $.ajax({
                 url : "<g:createLink controller="home" action="conciliar"/>",
                 type: "POST",
                 data : formData,
                 dataType: "json",
-                success: function(data, textStatus, jqXHR){
+                success: function(data){
                     if(data.response){
                         $("#error").css("display", "none");
                         $("#success").css("display", "block");
+                        $(".alert-danger").html(data.responseMessage)
                     } else {
                         $("#success").css("display", "none");
                         $("#error").css("display", "block");
+                        $(".alert-danger").html(data.responseMessage)
                     }
-                },
-                error: function (jqXHR, textStatus, errorThrown){
-
                 }
             });
         });
