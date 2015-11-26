@@ -53,51 +53,64 @@
     <div class="row">
         <div class="container">
             <h1 class="page-header">Hack Conciliación Pullman</h1>
-            <form id="form-hacked-conciliacion" action="<g:createLink controller="home" action="conciliar"/>" method="post">
+            <form id="hacked_conciliacion_form" name="hacked_conciliacion_form" action="<g:createLink controller="home" action="conciliar"/>" method="post">
                 <div class="row">
-                    <div class="col-xs-6">
-                        <div class='input-group date'>
-                            <input type='text' id='startDate' class="form-control" placeholder="Fecha Inicio" readonly/>
+                    <div class="col-sm-4">
+                        <div class='input-group control-group'>
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
                             </span>
-                        </div>
-                    </div>
-                    <div class="col-xs-6">
-                        <div class='input-group date'>
-                            <input type='text' id='endDate' class="form-control" placeholder="Fecha Fin" readonly/>
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
+                            <div class="controls">
+                                <input type='text' id='date' name='date' class="form-control" placeholder="Fecha" readonly/>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <br/><br/><br/>
                 <div class="row">
-                    <div class="col-xs-4">
-                        <div class='input-group date'>
+                    <div class="col-sm-4">
+                        <div class='input-group control-group'>
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-barcode"></span>
                             </span>
-                            <input type='text' id='pax' class="form-control" placeholder="Número de transacciones (#PAX)"/>
+                            <div class="controls">
+                                <input type='text' id='pax' name='pax' class="form-control" placeholder="Número de transacciones (#PAX)"/>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-4">
-                        <div class='input-group date'>
+                    <div class="col-sm-4">
+                        <div class='input-group control-group'>
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-usd"></span>
                             </span>
-                            <input type='text' id='amount' class="form-control" min="0.01" step="0.01" placeholder="Monto"/>
+                            <div class="controls">
+                                <input type='text' id='amount' name='amount' class="form-control" min="0.01" step="0.01" placeholder="Monto"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class='input-group control-group'>
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-usd"></span>
+                            </span>
+                            <div class="controls">
+                                <input type='text' id='amountPaid' name='amountPaid' class="form-control" min="0.01" step="0.01" placeholder="Monto pagado"/>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <br/><br/>
-                <button type="button" class="btn btn-primary" id="form-submit-button">Enviar</button>
+                <div class="form-actions">
+                    <input type="hidden" name="save" value="contact">
+                    <button type="submit" class="btn btn-primary" id="submit_form_button">Enviar</button>
+                </div>
             </form>
-            <div id="success"></div>
-            <div id="error"></div>
+            <div id="success" style="display: none;"><div class="alert alert-success" role="alert"></div></div>
+            <div id="error" style="display: none;"><div class="alert alert-danger" role="alert"></div></div>
         </div>
     </div>
 </div>
@@ -107,41 +120,73 @@
 <g:javascript library="moment"/>
 <g:javascript library="bootstrap-datepicker"/>
 <g:javascript library="autoNumeric-min"/>
+<g:javascript library="jquery.validate.min"/>
+<g:javascript library="additional-methods"/>
 <g:javascript library="ie10-viewport-bug-workaround"/>
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        $('#startDate').datepicker({
-            format: 'yyyy-mm-dd',
-            weekStart: '1',
-            autoclose: true,
-            todayHighlight: true
+    jQuery(document).ready(function () {
+
+        $("#hacked_conciliacion_form").validate({
+            rules: {
+                date: {
+                    minlength: 2,
+                    required: true
+                },
+                pax: {
+                    minlength: 1,
+                    required: true
+                },
+                amount: {
+                    minlength: 2,
+                    required: true
+                }
+            },
+            highlight: function (element) {
+                $(element).closest('.controls').addClass('alert-danger').removeClass('alert-success');
+            },
+            success: function (element) {
+                element.text('OK!').closest('.controls').addClass('alert-success').removeClass('alert-danger');
+            }
         });
-        $('#endDate').datepicker({
+    });
+
+    $(document).ready(function () {
+        $('#date').datepicker({
             format: 'yyyy-mm-dd',
             weekStart: '1',
             autoclose: true,
-            todayHighlight: true
+            todayHighlight: true,
+            endDate: "-1d"
         });
 
         $("#amount").autoNumeric('init', {aSep: '.', aDec: ',', aPad: false});
+        $("#amountPaid").autoNumeric('init', {aSep: '.', aDec: ',', aPad: false});
         $("#pax").autoNumeric('init', {aSep: '.', aDec: ',', aPad: false});
 
-        $(document).on("click", "#form-submit-button", function(){
+        $("#submit_form_button").submit(function(e){
 
             var formData = {
-                startDate: $('#startDate').val(),
-                endDate: $('#endDate').val(),
+                date: $('#date').val(),
                 pax: $('#pax').val(),
-                amount: $('#amount').val()
+                amount: $('#amount').val(),
+                amountPaid: $('#amountPaid').val()
             };
 
+            e.preventDefault();
             $.ajax({
                 url : "<g:createLink controller="home" action="conciliar"/>",
                 type: "POST",
                 data : formData,
+                dataType: "json",
                 success: function(data, textStatus, jqXHR){
-                    //data - response from server
+                    if(data.response){
+                        $("#error").css("display", "none");
+                        $("#success").css("display", "block");
+                    } else {
+                        $("#success").css("display", "none");
+                        $("#error").css("display", "block");
+                    }
                 },
                 error: function (jqXHR, textStatus, errorThrown){
 
