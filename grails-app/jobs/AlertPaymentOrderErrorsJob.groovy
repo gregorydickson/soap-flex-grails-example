@@ -1,24 +1,6 @@
 import latambuses.*
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
-import org.apache.commons.lang.WordUtils
-import org.quartz.JobExecutionException
-import org.quartz.Job
 import org.quartz.JobExecutionContext
-
-
-
-import grails.converters.JSON
-import grails.converters.XML
-
 import groovy.time.TimeCategory
-
-
-import java.text.SimpleDateFormat
-import javax.xml.transform.stream.StreamResult
-import java.text.SimpleDateFormat
-
-import grails.transaction.Transactional
 
 class AlertPaymentOrderErrorsJob  {
 
@@ -32,32 +14,25 @@ class AlertPaymentOrderErrorsJob  {
     def group = "LatAmGroup"
     def description = "Alert Payment OrderErrors "
 
-
     public void execute(JobExecutionContext context) {
         
         try{
-            log.info 'alert pament order error   Job'
-            
-
+            log.info 'alert pament order error Job'
 
             Date endTime = new Date()
             
-            Date startTime
+            Date startTime = new Date()
             use(TimeCategory) {
-                startTime = endTime - 10000000.minutes
+                startTime = endTime - 30.minutes
             }
             
             def errors = ['Locked','Paid but failed in the company']
             
-            def paymentOrders = PaymentOrder.findAllByLastUpdatedBetweenAndStatusInList(
-                    startTime,
-                    endTime,
-                    errors
-            )
+            List<PaymentOrder> paymentOrders = PaymentOrder.findAllByDateCreatedBetweenAndStatusInList(startTime, endTime, errors)
 
             Integer count = paymentOrders.size()
             log.info "returned from db findAll with:"+count
-            def message = ''
+            String message = ''
             paymentOrders.each{po ->
                 message = message +  "id:"+po.id+"<br>"
                 message = message + "status:"+po.status+"<br>"
@@ -72,13 +47,6 @@ class AlertPaymentOrderErrorsJob  {
             log.info "alert payment order error job complete"
         } catch(Throwable e){
             log.error ("Exception in  Payment Orde Errrors Job: ",  e)
-
         }
     }
-    
-
-    
-
-
-    
 }
