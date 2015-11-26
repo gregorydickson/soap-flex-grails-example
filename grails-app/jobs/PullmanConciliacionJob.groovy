@@ -22,13 +22,11 @@ import grails.transaction.Transactional
 
 class PullmanConciliacionJob  {
 
-    
     def pullmanService
 
-    
     static triggers = {
         //cron name: 'pullmanConTrigger', cronExpression: "0 0 14 * * ?"
-        //simple name: 'pullmanConTrigger', startDelay: 1000, repeatInterval: 1000*60*60*24
+        simple name: 'pullmanConTrigger', startDelay: 1000, repeatInterval: 1000*60*60*24
     }
 
     def group = "LatAmGroup"
@@ -172,10 +170,4 @@ class PullmanConciliacionJob  {
 
         }
     }
-    
-
-    
-
-
-    
 }
