@@ -40,9 +40,10 @@ class AlertPaymentOrderErrorsJob  {
                 message = message +"<br>"
             }
 
-            if(count > 0)
+            if(count > 0) {
                 log.info "sending error email"
                 emailService.paymentOrderError(message)
+            }
 
             log.info "alert payment order error job complete"
         } catch(Throwable e){
