@@ -210,11 +210,11 @@ class PullmanScraperJob  {
      * @param date the String date to be used in the scrape with format "dd/MM/yyyy"
      * @return
      */
-    def scrapeRoute(connectionParams, route, datesToScrape,companies) {
+    def scrapeRoute(LinkedHashMap connectionParams, CompanyRoute route, ArrayList datesToScrape, ArrayList companies) {
         SimpleDateFormat dateFormat = new SimpleDateFormat('dd/MM/yyyy')
         datesToScrape.each{date ->
 
-            def pullmanCompanies = companies.collectEntries{ item -> [item.pullmanCode,item]}
+            LinkedHashMap pullmanCompanies = companies.collectEntries{ item -> [item.pullmanCode,item]}
 
             def seatTypes = [:]
             seatTypes << [clasico: SeatType.findOrSaveByName("Clásico")]
