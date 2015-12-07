@@ -43,14 +43,19 @@ class PullmanScraperJob  {
 
             def routes = []
             def routeIds = []
-            def pullman = Company.findByName("pullman bus")
+            Company pullman = Company.findByName("pullman bus")
+
+            Location origin = Location.findByName("Santiago")
+            Location dest = Location.findByName("Curico")
+            List<Route> someRoutes = Route.findAllByOriginAndDestination(origin,dest)
+
             //create pullman routes if needed
             if(CompanyRoute.countByCompany(pullman) == 0) {
                 log.error "NO PULLMAN ROUTES FOR FLASH/FLEX SCRAPER"
                 return
             } else {
                 routes = CompanyRoute.findAllByCompany(pullman)
-                //routes = CompanyRoute.findAllByRouteInListAndCompany(someRoutes,pullman)
+                //routes = CompanyRoute.findAllByRouteInListAndCompany(someRoutes, pullman)
                 log.info "PULLMAN Staring New Scrape"
                 routes.collect{routeIds << it.id}
             }
@@ -64,24 +69,15 @@ class PullmanScraperJob  {
                         CompanyRoute.withNewSession{
 
                             def companies = []
-                            def company = Company.findByName("pullman bus")
-                            companies << company
-                            company = Company.findByName("elqui bus")
-                            companies << company
-                            company = Company.findByName("atacama vip")
-                            companies << company
-                            company = Company.findByName("los corsarios")
-                            companies << company
-                            company = Company.findByName("fichtur vip")
-                            companies << company
-                            company = Company.findByName("los libertadores")
-                            companies << company
-                            company = Company.findByName("los conquistadores")
-                            companies << company
-                            company = Company.findByName("cidher")
-                            companies << company
-                            company = Company.findByName("Buses Moraga")
-                            companies << company
+                            companies << Company.findByName("pullman bus")
+                            companies << Company.findByName("elqui bus")
+                            companies << Company.findByName("atacama vip")
+                            companies << Company.findByName("los corsarios")
+                            companies << Company.findByName("fichtur vip")
+                            companies << Company.findByName("los libertadores")
+                            companies << Company.findByName("los conquistadores")
+                            companies << Company.findByName("cidher")
+                            companies << Company.findByName("Buses Moraga")
 
                             def datesToScrape = []
                             Date today = new Date()
