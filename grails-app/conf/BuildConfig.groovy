@@ -69,8 +69,10 @@ grails.project.dependency.resolution = {
         compile ":quartz:1.0.2"
         compile ":mail:1.0.7"
 
+        compile "org.grails.plugins:quartz-monitor:1.0"
+
         // Uncomment these to enable additional asset-pipeline capabilities
-        //compile ":sass-asset-pipeline:1.9.0"
+        compile ":sass-asset-pipeline:1.9.0"
         //compile ":less-asset-pipeline:1.10.0"
         //compile ":coffee-asset-pipeline:1.8.0"
         //compile ":handlebars-asset-pipeline:1.3.0.3"
