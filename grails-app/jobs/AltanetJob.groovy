@@ -98,7 +98,7 @@ class AltanetJob  {
                         log.info "saved/found start location ${startLocation}"
                         endLocation = Location.findByNameAndCountryAndDescription(end.name, endcountry, end.name)
                         if(endLocation == null){
-                            log.info "creating endlocation:"end.name
+                            //log.info "creating endlocation:"${end.name}
                             endLocation = new Location()
                             endLocation.name = start.name
                             endLocation.country = endcountry
