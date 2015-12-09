@@ -39,17 +39,35 @@ environments {
             }
         }
     }
+
+    test {
+        dataSource {
+            dbCreate = "update"
+            url = System.getProperty("JDBC_CONNECTION_STRING")
+
+            pooled = true
+            properties {
+                maxActive = -1
+                minEvictableIdleTimeMillis=1800000
+                timeBetweenEvictionRunsMillis=1800000
+                numTestsPerEvictionRun=3
+                testOnBorrow=true
+                testWhileIdle=true
+                testOnReturn=true
+                validationQuery="SELECT 1"
+
+            }
+        }
+    }
   
     production {
         dataSource {
             dbCreate = "update"
-            url = "jdbc:mysql://labdbprod.cozoij7to0qa.sa-east-1.rds.amazonaws.com:3306/labdb"
-            username="labdbuser"
-            password="labdbprod"
+            url = System.getProperty("JDBC_CONNECTION_STRING")
 
             pooled = true
             properties {
-                maxActive = 30
+                maxActive = -1
                 minEvictableIdleTimeMillis=1800000
                 timeBetweenEvictionRunsMillis=1800000
                 numTestsPerEvictionRun=3
@@ -58,6 +76,6 @@ environments {
                 testOnReturn=true
                 validationQuery="SELECT 1"
             }
-      }
-  }
+        }
+    }
 }
