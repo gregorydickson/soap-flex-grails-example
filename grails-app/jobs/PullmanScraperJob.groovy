@@ -28,7 +28,7 @@ import java.text.SimpleDateFormat
 class PullmanScraperJob  {
 
     static triggers = {
-        cron name: 'pullmanTrigger', cronExpression: "0 0 18 * * ?"
+        //cron name: 'pullmanTrigger', cronExpression: "0 0 18 * * ?"
         //simple name: 'pullmanTrigger', startDelay: 6000, repeatInterval: 1000*60*60*24
     }
 
