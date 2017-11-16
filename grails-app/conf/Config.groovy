@@ -88,15 +88,15 @@ grails.hibernate.osiv.readonly = false
 environments {
     development {
         grails.logging.jul.usebridge = true
-        pullman.url = "http://190.98.231.232/Servicios/"
-        pullman.key = '7539510'
-        pullman.secret = 'ai$QHReveJTKBOfOTqIr'
+        pullman.url = ""
+        pullman.key = ''
+        pullman.secret = ''
     }
     production {
         grails.logging.jul.usebridge = false
-        pullman.url = "http://190.98.231.232/Servicios/"
-        pullman.key = '7539510'
-        pullman.secret = 'ai$QHReveJTKBOfOTqIr'
+        pullman.url = ""
+        pullman.key = ''
+        pullman.secret = ''
     }
 }
 
